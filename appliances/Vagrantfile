@@ -1,0 +1,37 @@
+# linux-lab — Katman 1 taban appliance'lar (x86_64) · Vagrant + VirtualBox
+# Tekrarlanabilir build:
+#   cd appliances && vagrant up           # ikisini de provision eder + doğrular
+#   vagrant package --base linux-lab-ubuntu-s0 --output ubuntu-s0.box   # dışa aktar
+# Repo, VM içinde /vagrant olarak görünür.
+Vagrant.configure("2") do |config|
+  config.vm.synced_folder "..", "/vagrant"
+
+  config.vm.define "ubuntu-s0" do |m|
+    m.vm.box = "bento/ubuntu-24.04"   # x86_64 — Vagrant Cloud'da guncel surumu dogrula
+    m.vm.hostname = "staging-server-01"
+    m.vm.provider "virtualbox" do |vb|
+      vb.name   = "linux-lab-ubuntu-s0"
+      vb.memory = 4096
+      vb.cpus   = 2
+    end
+    m.vm.provision "shell", inline: "cd /vagrant && bash provision-base.sh && bash test/verify-base.sh"
+  end
+
+  config.vm.define "rocky-s1" do |m|
+    m.vm.box = "bento/rockylinux-9"   # x86_64
+    m.vm.hostname = "staging-server-01"
+    m.vm.provider "virtualbox" do |vb|
+      vb.name   = "linux-lab-rocky-s1"
+      vb.memory = 4096
+      vb.cpus   = 2
+      # Seviye 1 LVM lab'i icin 3 ek disk (S1'e gelince bu blogu ac):
+      # (1..3).each do |i|
+      #   vb.customize ["createhd", "--filename", "rocky-disk#{i}.vdi", "--size", 2048]
+      #   vb.customize ["storageattach", :id, "--storagectl", "SATA Controller",
+      #                 "--port", i, "--device", 0, "--type", "hdd",
+      #                 "--medium", "rocky-disk#{i}.vdi"]
+      # end
+    end
+    m.vm.provision "shell", inline: "cd /vagrant && bash provision-base.sh && bash test/verify-base.sh"
+  end
+end

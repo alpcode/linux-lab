@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Katman 2 dağıtıcısı: bir seviye profilinin araçlarını kurar.
+# Kullanım: sudo lab-setup s0|s1|s2a|s2b|s3
+set -euo pipefail
+PROFILE="${1:-}"
+REPO_URL="${LINUX_LAB_REPO:-}"     # opsiyonel: profil yerelde yoksa buradan çekilir
+DIR=/opt/linux-lab/profiles
+
+case "$PROFILE" in
+  s0|s1|s2a|s2b|s3) ;;
+  *) echo "Kullanım: sudo lab-setup s0|s1|s2a|s2b|s3"; exit 2 ;;
+esac
+
+SCRIPT="$DIR/$PROFILE.sh"
+if [ ! -f "$SCRIPT" ] && [ -n "$REPO_URL" ]; then
+  echo ">> $PROFILE yerelde yok, repodan çekiliyor..."
+  curl -fsSL "$REPO_URL/profiles/$PROFILE.sh" -o "$SCRIPT" && chmod 0755 "$SCRIPT"
+fi
+[ -f "$SCRIPT" ] || { echo "Profil bulunamadı: $PROFILE. Henüz hazır olmayabilir."; exit 1; }
+
+echo ">> Seviye profili kuruluyor: $PROFILE"
+bash "$SCRIPT"
+echo ">> $PROFILE tamam."

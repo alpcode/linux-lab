@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Katman 3 dağıtıcısı: tek bir dersin senaryo fixture'larını sahneye koyar.
+# Kullanım: lesson-setup L0-U1-D1   ('Ü' otomatik 'U'ya çevrilir)
+set -euo pipefail
+CODE="${1:-}"
+[ -n "$CODE" ] || { echo "Kullanım: lesson-setup <ders-kodu>  (örn. L0-U1-D1)"; exit 2; }
+CODE="${CODE//Ü/U}"; CODE="${CODE//ü/u}"
+REPO_URL="${LINUX_LAB_REPO:-}"
+DIR=/opt/linux-lab/lessons
+
+SCRIPT="$DIR/$CODE/setup.sh"
+if [ ! -f "$SCRIPT" ] && [ -n "$REPO_URL" ]; then
+  echo ">> $CODE fixture'ı yerelde yok, repodan çekiliyor..."
+  mkdir -p "$DIR/$CODE"
+  curl -fsSL "$REPO_URL/lessons/$CODE/setup.sh" -o "$SCRIPT" && chmod 0755 "$SCRIPT"
+fi
+[ -f "$SCRIPT" ] || { echo "Bu ders için fixture yok: $CODE (boş olabilir — taban yeterli)."; exit 0; }
+
+echo ">> Ders fixture'ı kuruluyor: $CODE"
+bash "$SCRIPT"
+echo ">> $CODE hazır."
