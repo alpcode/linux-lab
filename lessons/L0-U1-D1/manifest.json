@@ -1,0 +1,496 @@
+{
+  "schema_version": "1.0",
+  "lesson": {
+    "code": "L0-U1-D1",
+    "title": "Linux Nedir? Kernel, Dağıtım ve Dosya Sistemi Hiyerarşisi (FHS)",
+    "level": "Seviye 0",
+    "unit": "Ünite 1",
+    "day": 1,
+    "environment": "ubuntu-s0",
+    "snapshot": "clean-base",
+    "fixtures": "L0-U1-D1",
+    "prompt": "selin@staging-server-01",
+    "estimated_duration_min": 73,
+    "record_with": "vhs-in-vm",
+    "narration_lang": "tr",
+    "on_screen_lang": "en",
+    "on_screen": {
+      "intro_banner": "Your output may differ"
+    },
+    "dub": {
+      "primary": "tr",
+      "tracks": [
+        "tr",
+        "en",
+        "es",
+        "pt",
+        "hi"
+      ],
+      "max_tracks": 6,
+      "slack_factor": 1.2,
+      "timing_rule": "Her beat'in ekranda kalma süresi = tüm izlerdeki narration ses sürelerinin MAKSİMUMU + tampon. TTS gelene kadar .tape'teki Sleep değerleri yer tutucudur; nihai zamanlama TTS adımında türetilir."
+    }
+  },
+  "symbols": {
+    "📝": "Not al",
+    "✏️": "Yaz",
+    "⌨️": "Komutu sen yaz",
+    "🤔": "Düşün / tahmin et",
+    "💬": "Anlatı (öğretmen konuşur)",
+    "⏱️": "Sayaç — video durmaz, sen yetişirsin",
+    "⏸️": "Videoyu durdur — işini bitir, sonra devam",
+    "✅": "Ekranında bunu görmelisin",
+    "🟢🟡🔴": "Komut güvenlik ışığı (yeşil rahat · kırmızı dikkat)"
+  },
+  "segments": [
+    {
+      "id": "01-cold-open",
+      "type": "face",
+      "title": "Soğuk açılış · Selin senaryosu",
+      "time_band": "00:00–00:40",
+      "note": "İlk 10 saniyede kanca. Productive-failure sorusu açılır, cevap VERİLMEZ.",
+      "parts": [
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Saat sabah dokuz. TechLabs'in tek SRE'si sensin. Müşteri Slack'ten yazdı: web sitesi açılmıyor, '500 hatası alıyorum' diyor. Kıdemli mühendis tatilde, telefonu kapalı. SSH ile sunucuya bağlandın ve karşında yanıp sönen bir imleç var."
+        },
+        {
+          "symbols": [
+            "🤔"
+          ],
+          "narration": "nginx ne hatası veriyor öğrenmek için, log dosyalarını nerede ararsın? Bir saniye düşün. Bu sorunun cevabını bugün vermeyeceğim — ama bu videonun sonunda sen tahmin edebileceksin. Başlayalım."
+        }
+      ]
+    },
+    {
+      "id": "02-symbol-language",
+      "type": "face",
+      "title": "Sembol dili tanıtımı",
+      "time_band": "00:40–02:30",
+      "note": "Yalnızca Gün 1'de anlatılır. Dokuz işaret bir kez öğretilir, 20 ay sabit kalır.",
+      "parts": [
+        {
+          "symbols": [],
+          "narration": null,
+          "sfx": "intro jingle (seslendirme yok)"
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Bu seriyi tek başına izleyip uygulayabilesin diye, ekranda hep aynı dokuz işareti kullanacağım. Defter işareti gördüğünde dur ve not al. Klavye işareti, sıranın sana geldiği, komutu yazacağın andır. Sayaç köşede akıyorsa video durmaz, sen yetişirsin. 'Videoyu durdur' kartı çıkarsa duraklat, işini bitir, sonra devam et. Yeşil tik, ekranında görmen gerekeni gösterir. Yeşil-sarı-kırmızı ışık ise bir komutun ne kadar güvenli olduğunu söyler: yeşil rahat dene, kırmızı dikkatli ol. Bu işaretleri bir kez öğren; 70 hafta boyunca aynı kalacaklar. Yanında bir de basılı çalışma kâğıdın olsun — videodaki her işaretin orada bir karşılığı var."
+        }
+      ]
+    },
+    {
+      "id": "03-tempo-habits",
+      "type": "face",
+      "title": "Tempo ve üç alışkanlık",
+      "time_band": "02:30–05:30",
+      "note": "Norm koyma. Coşku düşük, netlik yüksek. 'Bu üçü opsiyon değil.'",
+      "parts": [
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Hoş geldin. Bugün 18–20 ay sürecek bir yolculuğun ilk gününe başlıyoruz. Sonunda — istikrarla devam edersen — sıfırdan tek başına bir cloud-native ortamı tasarlayıp işletebilen bir SRE ya da Platform Engineer olacaksın. Bu yolculukta benden üç söz duyacaksın: sürdürülebilirlik, küçük tutarlı adımlar, ve dürüst geri bildirim. Tek kural: hızlı ilerlemek diye bir şey yok, tutarlı ilerlemek var. Bir gün eksik kalırsan sorun değil; ama bütün hafta yoksan 18 ay sonra hâlâ aynı yerdeyiz."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Bugünün konusu Linux'un kalbi: dosya sistemi. Ama önce üç alışkanlığı kuracağız, çünkü 70 hafta boyunca onlar olmadan dağılırız. Birincisi, hata günlüğü — yanılgılarımızı buraya kaydedeceğiz. İkincisi, Anki — eski bilgilerimizi buradan geri çağıracağız. Üçüncüsü, exit ticket — her dersin sonunda ne öğrendiğimizi yazılı bırakacağız. Bu üçü opsiyon değil, tasarım kararı."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Şimdi açılışta sorduğum soruya geri dönelim ve onu bir tahmin kartına yazalım."
+        }
+      ]
+    },
+    {
+      "id": "04-prediction-card",
+      "type": "card",
+      "title": "Tahmin kartı · Productive failure",
+      "time_band": "05:30–10:30",
+      "note": "Mevcut zihinsel modeli açığa çıkar. Cevap düzeltilmez, soru açık bırakılır.",
+      "parts": [
+        {
+          "symbols": [
+            "💬",
+            "✏️"
+          ],
+          "narration": "Hatırla: tek SRE'sin, site 500 veriyor, kıdemli mühendis yok. Sana tek bir soru soruyorum, olabildiğince dürüst cevap ver: web sunucusunun, yani nginx'in log dosyalarını nerede arardın? Tam bir yol yaz — bölme-şu-bölme-bu biçiminde. Bilmiyorsan 'bilmiyorum' yazmak doğru cevaptır."
+        },
+        {
+          "symbols": [
+            "⏸️"
+          ],
+          "pause_card": "VIDEOYU DURDUR — Workbook §1",
+          "card_sub": "Tahmin Kartı'nı doldur: yol + neden (bir cümle).",
+          "card_hold_sec": 5,
+          "narration": "Şimdi videoyu durdur ve tahmin kartını doldur. Bittiğinde devam et."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Geri döndün mü? Belki '/logs' yazdın — bu Windows alışkanlığı. Belki 'masaüstü' ya da 'nginx klasörü' dedin. Belki dürüstçe 'bilmiyorum' yazdın — bu en temiz başlangıç, çünkü hiçbir yanlış varsayım taşımıyor. Hiçbiri yanlış değil; her biri bir kapı aralıyor. Önemli olan şu: bu cevabı şimdi düzeltmeyeceğim."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Bu sorunun cevabını bugün vermeyeceğim. Vermek isterdim, ama önce 'log dosyaları neden bir yerde olur, oraya konmaları nasıl kararlaştırılmış' sorusunu çözmemiz lazım. Cevap haftanın sonunda kendiliğinden ortaya çıkacak. Tahmin kartını sakla; o gün yeniden okuyacağız ve cevabının nasıl değiştiğine bakacağız. Çözümsüz kalan bu soru, bütün hafta merak motorun olacak."
+        }
+      ]
+    },
+    {
+      "id": "05-theory-manim",
+      "type": "concept",
+      "title": "Teori bloğu · Manim animasyonları",
+      "time_band": "10:30–25:00",
+      "note": "Üç kavramsal bina: Linux=kernel · kernel/syscall · FHS. Derinleşilmez.",
+      "parts": [
+        {
+          "symbols": [
+            "💬"
+          ],
+          "visual": "Manim: kernel vs dağıtım katmanları",
+          "narration": "Linux, kesin anlamıyla bir kernel'in adıdır. 1991'de Linus Torvalds duyurdu. Kernel, donanımla doğrudan konuşan, CPU'yu, belleği, diski, ağı yöneten yazılımdır. Tek başına bir kernel bilgisayarı kullanılabilir hâle getirmez. Bir 'Linux dağıtımı' şunları bir araya getirir: kernel, artı kullanıcı alanı araçları — ls, cp, grep gibi — artı bir paket yöneticisi: apt, dnf, pacman. Ubuntu bir dağıtım, Debian, RHEL, Arch bir dağıtım. Hepsi aynı kernel'i kullanır; etrafındaki paket farklıdır. Bu programda iki aileyi göreceğiz: Debian ailesi, yani Ubuntu; ve Red Hat ailesi — RHEL, Fedora, Rocky."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "visual": "Manim: mutfak/salon/garson — syscall metaforu",
+          "narration": "Linux'ta her yazılım iki bölgeden birinde çalışır: kernel alanı ya da kullanıcı alanı. Kernel ayrıcalıklı modda koşar — her şeyi yapabilir, donanıma doğrudan emir verir. Kullanıcı alanı ayrıcalıksız modda koşar — bir dosya açmak, ağa paket göndermek istediğinde kernel'e sormak zorundadır. Bu sorma işleminin adı sistem çağrısı, kısaca syscall. Şu metaforu aklında tut, aylarca tekrar çağıracağız: kernel mutfaktır, kullanıcı alanı salondur, syscall garsondur. Müşteri doğrudan mutfağa giremez; garsona söyler. Mutfak kuralları koyar, ne çıkacağına karar verir. Bu sınır, Linux'un güvenlik temelidir."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "visual": "Manim: FHS ağacı, 6 dizin vurgulu",
+          "narration": "Şimdi sistemin nasıl örgütlendiğine bakalım. Bu yapının adı FHS — Filesystem Hierarchy Standard. Hangi dosya türünün hangi dizinde yaşayacağını tanımlayan bir standart. Neden gerekli? Çünkü her uygulama 'log'umu istediğim yere koyarım' deseydi, bir yöneticinin 100 sunucuyu yönetmesi imkânsız olurdu. FHS bir sözleşmedir: yapılandırmam burada, log'um şurada. Bu yüzden bir RHEL sunucusunda da, bir Ubuntu sunucusunda da nginx log'larını aynı yerde bulursun. Tam tanımı 100'den fazla dizin içerir; biz bugün altısına odaklanacağız: /etc, /var, /proc, /sys, /dev ve /tmp. Bu altısı SRE işinin yüzde 80'ini kapsar."
+        },
+        {
+          "symbols": [
+            "📝"
+          ],
+          "narration": "Bu tabloyu şimdi ezberlemeni istemiyorum. Önümüzdeki bölümde altı dizinin her birine sırayla gideceğiz, içine bakacağız ve mantığını birlikte kuracağız. Hazırsan, defterine basit bir ağaç çiz: en üstte bölme işareti, altında dallanan altı dizin. Lab boyunca her durakta bu ağaca bir not ekleyeceğiz."
+        }
+      ]
+    },
+    {
+      "id": "06-fhs-lab",
+      "type": "terminal",
+      "title": "Lab · FHS Turu (6 durak)",
+      "time_band": "25:00–58:00",
+      "note": "Worked-example modeling. Her durak: demo (izle) → sayaç (uygula) → ✅ kontrol.",
+      "environment_assert": "selin@staging-server-01",
+      "intro": {
+        "symbols": [
+          "⌨️",
+          "💬"
+        ],
+        "narration": "Bütün lab boyunca tek bir hareket kullanacağız: cd bir dizine girer, ls içindekileri listeler. Önce köke gidelim. Bu, Linux'un kökü — tek bir slash. Windows'taki gibi birden çok kök yok; tek ağaç, tek kök. Çıktıda /etc, /var, /proc, /sys, /dev, /tmp dizinlerini görüyorsun, başka birçok şeyle birlikte. Bugün bu altısına gideceğiz. Not: senin çıktın benimkinden biraz farklı olabilir — bu normal.",
+        "commands": [
+          {
+            "cmd": "cd /",
+            "typing_ms": 60,
+            "sleep_after_sec": 1
+          },
+          {
+            "cmd": "ls",
+            "typing_ms": 60,
+            "sleep_after_sec": 3,
+            "highlight": [
+              "etc",
+              "var",
+              "proc",
+              "sys",
+              "dev",
+              "tmp"
+            ]
+          }
+        ],
+        "counter_sec": 20
+      },
+      "stops": [
+        {
+          "dir": "/etc",
+          "label": "Yapılandırmanın evi",
+          "symbols": [
+            "⌨️",
+            "🔴"
+          ],
+          "narration": "İlk durağımız /etc — sistem geneli yapılandırma dosyalarının evi. Linux felsefesinin kalbi şu: yapılandırma metin dosyasıdır. Windows'taki gizli kayıt defteri değil — düz metin; git'e koyabileceğin, fark alabileceğin dosyalar. Şimdi sadece bakmak için cat /etc/shadow deneyelim. 'Permission denied' — iznin yok. Çünkü o dosya parola özetlerini tutuyor, herkesin okumasına izin verilemez. Aynı dizinde çoğu dosya açık, biri kilitli. İşte ilk güvenlik kararını gördün. Bu 'Permission denied' anını aklında tut — birazdan hata günlüğüne yazacağız.",
+          "commands": [
+            {
+              "cmd": "cd /etc",
+              "sleep_after_sec": 1
+            },
+            {
+              "cmd": "ls",
+              "sleep_after_sec": 2
+            },
+            {
+              "cmd": "cat /etc/hostname",
+              "sleep_after_sec": 2,
+              "expect": "staging-server-01"
+            },
+            {
+              "cmd": "cat /etc/shadow",
+              "sleep_after_sec": 3,
+              "expect": "Permission denied",
+              "highlight_red": true,
+              "safety": "🔴"
+            }
+          ],
+          "counter_sec": 60,
+          "on_screen": "Home of configuration"
+        },
+        {
+          "dir": "/var",
+          "label": "Değişen verinin evi",
+          "symbols": [
+            "⌨️"
+          ],
+          "narration": "İkinci durak: /var — değişken veri. /etc kalıcıyken, /var çalışma sırasında sürekli büyüyen verilerin evi: log'lar, kuyruklar, cache. Açılış sorumuzu hatırla — log nerede? — ipucu burada. Bu, programda en çok ziyaret edeceğin dizin. auth.log'a bakalım. Gördün mü — sisteme her giriş, her sudo buraya yazılıyor. İşte açılış sorumuzun yarısı: log'lar /var/log altında yaşar, çünkü log'lar değişken veridir ve /var değişken verinin evidir. Bir not: bu dosya Debian'da auth.log; Red Hat ailesinde karşılığı /var/log/secure.",
+          "commands": [
+            {
+              "cmd": "cd /var/log",
+              "sleep_after_sec": 1
+            },
+            {
+              "cmd": "ls",
+              "sleep_after_sec": 2
+            },
+            {
+              "cmd": "sudo tail -n 5 /var/log/auth.log",
+              "sleep_after_sec": 3,
+              "expect": "selin girişleri / sudo satırları",
+              "overlay": "RHEL ailesinde: /var/log/secure"
+            }
+          ],
+          "counter_sec": 75,
+          "on_screen": "Home of changing data"
+        },
+        {
+          "dir": "/proc",
+          "label": "Diskte olmayan dizin (canlı)",
+          "symbols": [
+            "⌨️"
+          ],
+          "narration": "Üçüncü durak farklı bir canavar: /proc. Şimdiye kadarki dizinler diskte gerçekten vardı. /proc yok — diskte hiç yer kaplamaz. Sanal bir dosya sistemi: kernel kendi iç durumunu sahte dosyalar olarak sunuyor. Bu sayıların her biri çalışan bir sürecin numarası — PID. Ama asıl sihir şu: bu dosyalar canlı. cat /proc/uptime yaz, birkaç saniye bekle, tekrar yaz. İlk sayı değişti — sistemin saniye cinsinden ne kadar süredir açık olduğu. Bu dosya diskte değil; her okuduğunda kernel o anki değeri üretiyor. İşte bugünün en önemli karşıtlığı: /etc kalıcı, /proc canlı.",
+          "commands": [
+            {
+              "cmd": "cd /proc",
+              "sleep_after_sec": 1
+            },
+            {
+              "cmd": "ls",
+              "sleep_after_sec": 2
+            },
+            {
+              "cmd": "cat /proc/cpuinfo | head -n 20",
+              "sleep_after_sec": 3
+            },
+            {
+              "cmd": "cat /proc/uptime",
+              "sleep_after_sec": 3,
+              "note": "ilk okuma"
+            },
+            {
+              "cmd": "cat /proc/uptime",
+              "sleep_after_sec": 2,
+              "note": "ikinci okuma — ilk sayı DEĞİŞTİ",
+              "highlight": [
+                "ilk sayı"
+              ]
+            }
+          ],
+          "counter_sec": 75,
+          "on_screen": "Live kernel view (not on disk)"
+        },
+        {
+          "dir": "/sys",
+          "label": "Donanımın aynası",
+          "symbols": [
+            "⌨️"
+          ],
+          "narration": "Dördüncü durak /proc'un kuzeni: /sys. O da sanal, o da diskte yok — ama amacı daha düzenli: aygıtlar ve kernel alt sistemleri hakkında yapılandırılmış bilgi. ls /sys/class/net yaz — ağ arayüzlerini görüyorsun: lo, yani loopback, ve gerçek arayüzün. Bugün /sys'i derinlemesine kullanmayacağız; ileride aygıt ve performans konularında döneceğiz. Şimdilik bil: /proc ve /sys ikisi de sanal, ikisi de kernel'in penceresi — /proc daha çok süreç, /sys daha çok aygıt.",
+          "commands": [
+            {
+              "cmd": "ls /sys/class/net",
+              "sleep_after_sec": 3,
+              "expect": "lo ve gerçek arayüz (ör. enp0s1)"
+            },
+            {
+              "cmd": "cat /sys/class/net/lo/mtu",
+              "sleep_after_sec": 2,
+              "expect": "65536"
+            }
+          ],
+          "counter_sec": 60,
+          "on_screen": "The hardware's mirror"
+        },
+        {
+          "dir": "/dev",
+          "label": "'Her şey dosyadır' felsefesi",
+          "symbols": [
+            "⌨️"
+          ],
+          "narration": "Beşinci durak Linux felsefesinin en güzel örneği: /dev. Burada aygıtlar dosya olarak görünür — diskin bir dosya, terminalin bir dosya, hatta 'hiçlik' bile bir dosya. Meşhur söz: 'her şey dosyadır'. İlk özel dosya /dev/null — kara delik. Deneyelim: echo ile bir yazıyı /dev/null'a yönlendir. Hiçbir şey olmadı — yazı kara deliğe gitti, yok oldu. İleride scriptlerde 'bu çıktıyı istemiyorum' demek için sürekli buraya yönlendireceksin. İkincisi /dev/zero — sonsuz sıfır. Üçüncüsü /dev/urandom — rastgele sayı; güvenli parola üretiminde kullanacağız. Bunu Hafta 9'da kullanıcı yönetim scriptinde hasat edeceğiz.",
+          "commands": [
+            {
+              "cmd": "cd /dev",
+              "sleep_after_sec": 1
+            },
+            {
+              "cmd": "ls",
+              "sleep_after_sec": 2,
+              "highlight": [
+                "null",
+                "zero",
+                "urandom"
+              ]
+            },
+            {
+              "cmd": "echo \"bu yazi kaybolacak\" > /dev/null",
+              "sleep_after_sec": 2,
+              "expect": "hiçbir çıktı yok (kara delik)"
+            }
+          ],
+          "counter_sec": 60,
+          "check": "✅ echo sessizce döndü mü?",
+          "on_screen": "'Everything is a file'"
+        },
+        {
+          "dir": "/tmp",
+          "label": "Geçicinin evi",
+          "symbols": [
+            "⌨️"
+          ],
+          "narration": "Son durak en basiti: /tmp — geçici dosyalar. Programlar kısa ömürlü dosyalarını buraya koyar. Önemli özelliği: yeniden başlatmada genellikle temizlenir; buraya koyduğun hiçbir şeye güvenme. İki şeye dikkat: birincisi, herkes buraya yazabilir; ikincisi, bazı sistemlerde /tmp diskte değil RAM'de tutulur — buna tmpfs denir. df -h /tmp yaz. Çıktıda 'tmpfs' görüyorsan /tmp'n bellekte; disk satırı görüyorsan diskte. İkisi de geçerli, dağıtıma göre değişir. Mesele şu: /tmp asla kalıcı veri için değildir.",
+          "commands": [
+            {
+              "cmd": "cd /tmp",
+              "sleep_after_sec": 1
+            },
+            {
+              "cmd": "ls -la",
+              "sleep_after_sec": 2
+            },
+            {
+              "cmd": "df -h /tmp",
+              "sleep_after_sec": 3,
+              "highlight": [
+                "tmpfs"
+              ],
+              "expect": "tmpfs (RAM) ya da disk satırı"
+            }
+          ],
+          "counter_sec": 60,
+          "check": "✅ df çıktısında tipi (tmpfs/disk) görüyor musun?",
+          "on_screen": "Home of temporary files"
+        }
+      ],
+      "closing": {
+        "symbols": [
+          "⏸️"
+        ],
+        "pause_card": "60 sn göz kapalı geri çağırma",
+        "narration": "Altı durağı da gezdik. Defterindeki ağaca bak — kökü slash olan ağaç. Altı dala da gittik. Şimdi 60 saniye kendine ver: gözünü kapat ve altısını amacıyla hatırlamaya çalış. /etc neydi? /var? /proc ile /etc arasındaki en büyük fark neydi? İşte bugünün asıl kazanımı: bir dizinin yerini artık rastgele aramıyorsun. Yapılandırma mı? /etc. Log mu? /var. Canlı sistem bilgisi mi? /proc. Amacı bilirsen yeri bulursun."
+      }
+    },
+    {
+      "id": "07-errorlog-anki",
+      "type": "card",
+      "title": "Hata günlüğü ve Anki",
+      "time_band": "58:00–66:00",
+      "note": "İki ömür boyu alışkanlık. İlk Anki tekrarı bugün DEĞİL — yarın.",
+      "parts": [
+        {
+          "symbols": [
+            "⌨️",
+            "⏸️"
+          ],
+          "pause_card": "İlk hata girdisini yaz",
+          "command_demo": "nano ~/hata-gunlugu.md",
+          "narration": "Şimdi 70 hafta tutacağın bir dosya oluşturuyoruz: hata günlüğü. Anki'de bildiğimizi tekrar ederiz; hata günlüğünde yanılgımızın izini süreriz. Bir hata yaptığında — çok yapacaksın, bu iyi bir şey — buraya yazacaksın: ne bekledim, ne oldu, neden, ne öğrendim. Bugün gerçek bir arıza yaşamadık ama bir gözlem yaşadık: /etc/shadow'a baktığımızda 'Permission denied' aldık. İlk girdimiz bu olsun. Dosyayı oluştur ve şablonu doldur."
+        },
+        {
+          "symbols": [
+            "⏸️"
+          ],
+          "pause_card": "Anki'yi kur, 15 kartı ekle",
+          "asset": "Deste: Linux-Cloud · 15 kart (açıklamada .apkg/metin)",
+          "narration": "Üçüncü alışkanlık: Anki — aralıklı tekrar uygulaması. Bir kartı doğru hatırlayınca sonraki gösterimi geciktirir, yanlış hatırlayınca yakınlaştırır; unutma eğrisini matematiksel olarak yener. apps.ankiweb.net'ten ücretsiz indir, 'Linux-Cloud' adlı bir deste oluştur ve sana vereceğim 15 kartı ekle. Bugünün kartlarını açıklamada hazır dosya olarak bırakıyorum. Önemli: ilk tekrar oturumu bugün değil, yarın — aralık etkisi için en az bir gün geçmeli. Kurulum yetişmezse akşama bırakabilirsin; bugünkü hedef 15 kartı görmek."
+        }
+      ]
+    },
+    {
+      "id": "08-exit-ticket",
+      "type": "card",
+      "title": "Exit ticket",
+      "time_band": "66:00–71:00",
+      "note": "Formatif döngü. Amaç not değil; nerede sağlam, nerede gevşek görmek.",
+      "parts": [
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Son bölüm: exit ticket. Her dersi böyle bitireceğiz. Amacı not vermek değil — bugün öğrendiğinin nerede sağlam, nerede gevşek olduğunu hem sen hem ben görelim. Dürüst ol; 'anlamadım' değerli bir cevap, çünkü yarın oradan başlarız."
+        },
+        {
+          "symbols": [
+            "⏸️"
+          ],
+          "pause_card": "VIDEOYU DURDUR — Workbook §8",
+          "card_hold_sec": 5,
+          "narration": "Videoyu durdur ve exit ticket'ı doldur. Bittiğinde devam et."
+        },
+        {
+          "symbols": [
+            "✅"
+          ],
+          "answer_key": "/etc→b  /var→d  /proc→a  /tmp→c",
+          "narration": "Geri döndün mü? Eşleştirme cevapları: /etc yapılandırma; /var değişken veri, log'ların evi; /proc kernel'in canlı bilgisi; /tmp geçici, restart'ta silinir. Dördünü de doğru eşlediysen bugünün hedefine ulaştın. Eksik kaldıysa endişelenme — yarının ilk dakikalarında birlikte tazeleyeceğiz."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "narration": "Çıkmadan önce — açılışta yazdığın tahmin kartını çıkar. 'Log dosyalarını nerede arardım' diye yazmıştın. Şimdi oku. /var/log'u gördükten sonra cevabın değişti mi? Değiştirme henüz — sadece oku ve aklında tut. Cuma günü o kartı bitireceğiz."
+        }
+      ]
+    },
+    {
+      "id": "09-closing",
+      "type": "face",
+      "title": "Kapanış",
+      "time_band": "71:00–73:30",
+      "note": "Salı köprüsü + Cuma teaser. Başarı kriteri: yarın geri gelmek isteyecek mi?",
+      "parts": [
+        {
+          "symbols": [
+            "💬"
+          ],
+          "bridge_card": "Yarın: ls, cd, pwd, cp, mv, rm + ilk Anki tekrarı",
+          "narration": "Bugün altı dizini amacıyla tanıdık. Artık bir dizinin yerini rastgele aramıyorsun: yapılandırma mı? /etc. Log mu? /var. Canlı sistem bilgisi mi? /proc. Amacı bilirsen yeri bulursun. Yarın bu dizinler arasında akıcı gezinmeyi öğreneceğiz — mutlak ve göreli yol, ls bayrakları — ve günün ilk işi bugünkü 15 kartın ilk Anki tekrarı olacak. Nereye gideceğini bugün öğrendin; nasıl gideceğini yarın öğreneceğiz."
+        },
+        {
+          "symbols": [
+            "💬"
+          ],
+          "outro": "abone / sonraki video / oynatma listesi · Cuma teaser",
+          "narration": "İyi iş çıkardın. Bu açılış sorusunun cevabını Cuma birlikte yazacağız — kaçırma. Yarın görüşürüz."
+        }
+      ]
+    }
+  ]
+}
