@@ -134,7 +134,7 @@ for i, (st, s, e) in enumerate(windows):
     label = f"{st['dir']} · {title}".strip(" ·")
     dt.append(DT(textfile(f"stop{i}", label), 30, "24", "h-th-24", enable=[s, e]))
 
-# ---- filtergraph birleştir ----
+# ---- filtergraph birleştir ---------
 fc = ";".join(ov_chain)
 fc = (fc + ";" if fc else "") + last + ",".join(dt) + "[outv]"
 
