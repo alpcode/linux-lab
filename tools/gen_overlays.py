@@ -52,25 +52,42 @@ term = next((s for s in m["segments"] if s["type"] == "terminal"), None)
 if not term:
     sys.exit("manifestte 'terminal' segmenti yok")
 
-# ---- zaman çizelgesi (tahmin) ----
-def cmd_time(c):
-    return len(c["cmd"]) * (c.get("typing_ms", 60)) / 1000.0 + c.get("sleep_after_sec", 2)
+# ---- zaman çizelgesi: durations.json varsa ANLATIM süreleri, yoksa manifest tahmini ----
+primary = m["lesson"].get("narration_lang", "tr")
+dpath = _repo_root(manifest_path) / "out" / code / "audio" / primary / "durations.json"
+dur_sec = {}
+if dpath.exists():
+    for b in json.loads(dpath.read_text(encoding="utf-8")).get("beats", []):
+        if b["kind"] == "term_intro": dur_sec["intro"] = b["duration_sec"]
+        elif b["kind"] == "term_closing": dur_sec["closing"] = b["duration_sec"]
+        elif b["kind"] == "term_stop" and b.get("dir"): dur_sec[b["dir"]] = b["duration_sec"]
 
-t = 0.0
 intro = term.get("intro")
-intro_win = None
-if intro:
-    s = t
-    for c in intro["commands"]:
-        t += cmd_time(c)
-    intro_win = [s, t]
 windows = []
-for st in term.get("stops", []):
-    s = t
-    for c in st["commands"]:
-        t += cmd_time(c)
-    windows.append([st, s, t])
-est_total = t or 1.0
+if dur_sec:                                  # ses-türetimli (senkron)
+    d_in = dur_sec.get("intro", 0.0)
+    intro_win = [0.0, d_in] if intro else None
+    t = d_in
+    for st in term.get("stops", []):
+        d = dur_sec.get(st["dir"], 0.0)
+        windows.append([st, t, t + d]); t += d
+    est_total = (t + dur_sec.get("closing", 0.0)) or 1.0
+else:                                         # manifest-tahmin (yer tutucu)
+    def cmd_time(c):
+        return len(c["cmd"]) * (c.get("typing_ms", 60)) / 1000.0 + c.get("sleep_after_sec", 2)
+    t = 0.0
+    intro_win = None
+    if intro:
+        s = t
+        for c in intro["commands"]:
+            t += cmd_time(c)
+        intro_win = [s, t]
+    for st in term.get("stops", []):
+        s = t
+        for c in st["commands"]:
+            t += cmd_time(c)
+        windows.append([st, s, t])
+    est_total = t or 1.0
 
 # ---- gerçek süreye ölçekle ----
 real = float(subprocess.check_output(
